@@ -125,9 +125,13 @@ def add_legend(
     ncol=None,
     fontsize="x-large",
     bbox_to_anchor=(0.5, 1.2),
+    palette=None,
 ):
-    colors = sns.color_palette("colorblind", len(labels))
-    colors = dict(zip(labels, colors))
+    if palette is None:
+        colors = sns.color_palette("colorblind", len(labels))
+        colors = dict(zip(labels, colors))
+    else:
+        colors = palette
     fake_patches = [mpatches.Patch(color=colors[label], alpha=0.75) for label in labels]
     fanda.ax.legend(
         fake_patches,
