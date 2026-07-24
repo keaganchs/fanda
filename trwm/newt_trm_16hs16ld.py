@@ -14,7 +14,7 @@ np.random.seed(42)
 
 
 df = (
-    fetch_wandb("trm-dynamics", "TRM Dynamics", filters={"group": {"$regex": ".*-newt-S-(16ld|128ld|512ld|baseline)$"}})
+    fetch_wandb("trm-dynamics", "TRM Dynamics", filters={"group": {"$regex": ".*-newt-S-baseline$|dmc_trmd_mlp_16hs16ld_no_rec"}})
     # .pipe(transforms.truncate, column="eval/episode_reward", groupby="group")
     # .pipe(
     #     transforms.remove_outliers,
@@ -26,16 +26,15 @@ df = (
 )
 
 # Add legend column for the last part of the group name after the last dash
-df["legend"] = df["group"].apply(lambda x: x.split("-")[-1])
-df["legend"] = df["legend"].replace({"baseline": "384ld (baseline)"})
+df["legend"] = df["group"]
+df["legend"] = df["legend"].replace({"dmc-newt-S-baseline": "Baseline"})
+df["legend"] = df["legend"].replace({"dmc_trmd_mlp_16hs16ld_no_rec": "Tokenized TRM, no recursion"})
 
 
 _blues = blue_rocket(4)
 palette = {
-    "16ld": _blues[0],
-    "128ld": _blues[1],
-    "384ld (baseline)": _blues[2],
-    "512ld": _blues[3],
+    "Baseline": _blues[0],
+    "Tokenized TRM, no recursion": _blues[2],
 }
 labels = list(palette.keys())
 
@@ -68,7 +67,7 @@ fanda = (
     )
     .pipe(lambda f: [plt.tight_layout(), f][1])
     .pipe(show_fig)
-    .pipe(save_fig, name="images/noisy_training", format="png")
+    .pipe(save_fig, name="images/trm_16hs16ld", format="png")
     .pipe(close_fig)
 )
 

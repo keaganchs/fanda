@@ -1,0 +1,34 @@
+% Parameter counts for the Newt MLP baselines across the latent-dim sweep.
+% Companion to the newt_s_latent_dim figure (Newt S vs Newt XL).
+%
+% Provenance: Newt S counts are read directly from the training logs on W&B
+% ("Learnable parameters" / "Dynamics (...)" in the architecture summary).
+% The Newt XL runs uploaded no console log, so their counts were reproduced by
+% instantiating the world model from each run's stored config; that procedure
+% reproduces all four Newt S rows exactly, and every XL dynamics count matches
+% the `num_dynamics_params` recorded by the run itself.
+%
+% Requires \usepackage{booktabs}.
+
+\begin{table}[t]
+  \centering
+  \caption{Learnable parameter counts for the Newt baselines across latent
+  dimensions. \emph{Total} is the whole world model (encoder, dynamics, reward,
+  policy prior and the online $Q$-ensemble); \emph{Dynamics} is the dynamics
+  model alone. Newt~S uses a single projection as its dynamics model, whereas
+  Newt~XL widens it to a two-layer $512{\times}512$ MLP, which is where nearly
+  all of the additional capacity goes.}
+  \label{tab:newt-latent-dim-params}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & \multicolumn{2}{c}{Newt S} & \multicolumn{2}{c}{Newt XL} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    Latent dim & Total & Dynamics & Total & Dynamics \\
+    \midrule
+    16            &   862,004 &   8,752 & 1,405,236 &   551,984 \\
+    128           & 1,053,188 &  84,352 & 1,635,844 &   667,008 \\
+    384 (default) & 1,584,388 & 351,360 & 2,162,948 &   929,920 \\
+    512           & 1,899,140 & 534,016 & 2,426,500 & 1,061,376 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

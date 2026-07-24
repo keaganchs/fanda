@@ -1,0 +1,46 @@
+% Parameter counts for the SRM variants and the Newt baselines.
+% Companion to the srm_v_newt_ld / srm_cycles / abl_srm_truncation figures.
+%
+% Provenance: dynamics counts are the `num_dynamics_params` value each run
+% recorded into its own W&B config at construction time. Totals are that count
+% plus the shared non-dynamics parameters (encoder + reward + policy prior +
+% online Q-ensemble) at the same latent dim, which are architecturally
+% identical across dynamics variants. That decomposition reproduces the Newt
+% S and Newt S + XL d totals exactly.
+%
+% Note the two SRM variants are NOT the same model: the abl_latent_dim family
+% uses a SwiGLU context net with L_layers=2, the abl_cycles_srm and 3h12l
+% families an MLP context net with L_layers=1. Recursion depth (H/L) does not
+% change the parameter count -- the core is applied repeatedly.
+%
+% Requires \usepackage{booktabs}.
+
+\begin{table}[t]
+  \centering
+  \caption{Learnable parameter counts for the SRM dynamics variants and the
+  Newt MLP baselines. \emph{Total} is the whole world model; \emph{Dynamics} is
+  the dynamics model alone. Recursion depth is not a capacity knob: every SRM
+  row at a given variant and latent dim shares one recursively applied core, so
+  the $1h1l$ and $4h3l$ cells have identical parameter counts and differ only in
+  how many times that core is applied.}
+  \label{tab:srm-params}
+  \begin{tabular}{llrr}
+    \toprule
+    Model & Latent dim & Total & Dynamics \\
+    \midrule
+    \multicolumn{4}{l}{\emph{Newt baselines}} \\
+    Newt S            & 384 & 1,584,388 &   351,360 \\
+    Newt S + XL d     & 384 & 2,162,948 &   929,920 \\
+    \addlinespace
+    \multicolumn{4}{l}{\emph{SRM, SwiGLU context net, $L_{\text{layers}}=2$}} \\
+    SRM 4h3l          &  16 &   865,124 &    11,872 \\
+    SRM 4h3l          & 128 & 1,237,892 &   269,056 \\
+    SRM 4h3l          & 384 & 3,207,556 & 1,974,528 \\
+    SRM 4h3l          & 512 & 4,800,644 & 3,435,520 \\
+    \addlinespace
+    \multicolumn{4}{l}{\emph{SRM, MLP context net, $L_{\text{layers}}=1$}} \\
+    SRM 1h1l--8h4l    & 384 & 2,027,908 &   794,880 \\
+    SRM 3h12l         & 384 & 2,027,908 &   794,880 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

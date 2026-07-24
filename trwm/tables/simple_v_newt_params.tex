@@ -1,0 +1,36 @@
+% Parameter counts for the SimpleTRM dynamics across the latent-dim sweep.
+% Companion to the simple_v_newt_ld figure (SimpleTRM 4h3l / 1h1l vs Newt S / Newt S+XLd).
+%
+% Provenance: dynamics counts are the `num_dynamics_params` each run recorded into
+% its W&B config at construction; totals were reproduced by instantiating the
+% world model from each run's config (with L_layers=1, the single-layer core these
+% pre-refactor checkpoints actually trained with) and agree with the logged
+% dynamics count exactly. Totals = shared non-dynamics parameters (encoder +
+% reward + policy prior + online Q-ensemble, identical to Newt S at the same
+% latent dim) + the SimpleTRM dynamics.
+%
+% Recursion depth is not a capacity knob: the 1h1l and 4h3l cells share one
+% recursively applied core, so their parameter counts are identical -- the table
+% has one row per latent dim.
+%
+% Requires \usepackage{booktabs}.
+
+\begin{table}[t]
+  \centering
+  \caption{Learnable parameter counts for the SimpleTRM dynamics across latent
+  dimensions. \emph{Total} is the whole world model; \emph{Dynamics} is the
+  SimpleTRM dynamics alone. The two recursion depths compared in the figure
+  ($1h1l$ and $4h3l$) share one recursively applied core, so their counts are
+  identical and differ only in how many times that core is applied.}
+  \label{tab:simple-v-newt-params}
+  \begin{tabular}{lrr}
+    \toprule
+    Latent dim & Total & Dynamics \\
+    \midrule
+    16            &   862,516 &     9,264 \\
+    128           & 1,085,956 &   117,120 \\
+    384 (default) & 1,879,300 &   646,272 \\
+    512           & 2,423,428 & 1,058,304 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

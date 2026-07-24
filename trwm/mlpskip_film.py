@@ -14,7 +14,7 @@ np.random.seed(42)
 
 
 df = (
-    fetch_wandb("trm-dynamics", "TRM Dynamics", filters={"group": {"$regex": ".*-newt-S-(16ld|128ld|512ld|baseline)$"}})
+    fetch_wandb("trm-dynamics", "TRM Dynamics", filters={"group": {"$regex": ".*-newt-S-baseline$|mlpskip_film|mlpskip_nofilm|dmcontrol-newt-S-XL-dynamics$"}})
     # .pipe(transforms.truncate, column="eval/episode_reward", groupby="group")
     # .pipe(
     #     transforms.remove_outliers,
@@ -26,16 +26,18 @@ df = (
 )
 
 # Add legend column for the last part of the group name after the last dash
-df["legend"] = df["group"].apply(lambda x: x.split("-")[-1])
-df["legend"] = df["legend"].replace({"baseline": "384ld (baseline)"})
-
+df["legend"] = df["group"]
+df["legend"] = df["legend"].replace({"dmc-newt-S-baseline": "NewtS (350k)"})
+df["legend"] = df["legend"].replace({"mlpskip_film": "MLPSkip+FiLM (800k)"})
+df["legend"] = df["legend"].replace({"mlpskip_nofilm": "MLPSkip (800k)"})
+df["legend"] = df["legend"].replace({"dmcontrol-newt-S-XL-dynamics": "XL Dynamics (930k)"})
 
 _blues = blue_rocket(4)
 palette = {
-    "16ld": _blues[0],
-    "128ld": _blues[1],
-    "384ld (baseline)": _blues[2],
-    "512ld": _blues[3],
+    "NewtS (350k)": _blues[0],
+    "MLPSkip+FiLM (800k)": _blues[1],
+    "MLPSkip (800k)": _blues[2],
+    "XL Dynamics (930k)": _blues[3],
 }
 labels = list(palette.keys())
 
@@ -68,7 +70,7 @@ fanda = (
     )
     .pipe(lambda f: [plt.tight_layout(), f][1])
     .pipe(show_fig)
-    .pipe(save_fig, name="images/noisy_training", format="png")
+    .pipe(save_fig, name="images/mlpskip_film", format="png")
     .pipe(close_fig)
 )
 
